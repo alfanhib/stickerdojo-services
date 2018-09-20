@@ -11,6 +11,11 @@ const {
   updateEmail
 } = require('../../dispatchers/users')
 
+// Middlewares
+const {
+  authenticateUser
+} = require('../../middlewares/authenticate')
+
 /**
  * End Points
  * 
@@ -30,7 +35,7 @@ router.post('/user/register', (req, res, next) => {
 })
 
 // Get or Fetch all users
-router.get('/users', (req, res, next) => {
+router.get('/users', authenticateUser, (req, res, next) => {
   Promise.try(() => getUsers())
     .then(response => res.status(response.status).json(response))
     .catch(err => console.log("Error on GET_ALL_USERS", err))

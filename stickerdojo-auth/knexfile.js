@@ -1,10 +1,10 @@
-// Update with your config settings.
+require('dotenv').config({path:"../.env"})
 
 module.exports = {
 
   development: {
     client: 'pg',
-    connection: 'postgres://muhammadisa:passwordisNOTsame@localhost/stickerdojo'
+    connection: process.env.DATABASE_DEVELOPMENT
   }
 
 }
