@@ -1,0 +1,26 @@
+# Linux
+.directory
+*~
+
+# Environment
+.env
+stickerdojo.key
+
+# Migrations and Seeds
+migrations
+seeds
+
+# npm
+stickerdojo-auth/node_modules
+stickerdojo-users/node_modules
+stickerdojo-auth/package-lock.json
+stickerdojo-users/package-lock.json
+*.log
+*.gz
+
+
+# Coveralls
+coverage
+
+# Benchmarking
+benchmarks/graphs
