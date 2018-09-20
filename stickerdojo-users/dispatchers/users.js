@@ -220,39 +220,53 @@ exports.deleteUser = (uuid) => {
 exports.updateEmail = (body) => {
 
   // Get user which want to edit
-  const findingUserByUUID = (uuid) => {
+  const findingUserByEmailAddress = (body) => {
     return knex('users')
-      .where('users.id', uuid)
+      .where('users.email_address', body.email_address)
   }
 
   // Get user which want to edit
-  const findingUserByUUIDAndCheckResult = (data) => {
+  const findingUserByEmailAddressAndCheckResult = (data) => {
     return new Promise((resolve, reject) => {
       data.length
       ?
         resolve(data)
       :
-        reject(errorResponse(`Delete Operation cannot be continue because there is no user with uuid ${uuid}`, 404))
+        reject(errorResponse(`Delete Operation cannot be continue because there is no user was found`, 404))
     })
   }
 
-  // Edit user
-  const editUsersEmailAddress = (uuid, new_email_address) => {
-
+  // Get user which want to edit
+  const editEmail = (body) => {
+    console.log(body)
     const currentTime = new Date().toISOString()
-
     return knex('users')
-      .where('users.id', uuid)
+      .where('users.email_address', body.email_address)
       .update({
-        email_address: new_email_address,
+        email_address: body.new_email_address,
         modify_at: currentTime
+      })
+      .then(result => result)
+  }
+
+  const decryptPassword = (password, hashedPassword) => {
+    return bcrypt
+      .compare(password, hashedPassword)
+      .then(result => {
+        return new Promise((resolve, reject) => {
+          result
+          ?
+            resolve(result)
+          :
+            reject(errorResponse("Incorrect Password", 409))
+        })
       })
   }
 
   // Verify
   const verify = (body) => {
     return new Promise((resolve, reject) => {
-      body.password && body.hashed_password && body.email_address
+      body.email_address && body.new_email_address && body.password
       ?
         resolve(body)
       :
@@ -262,6 +276,12 @@ exports.updateEmail = (body) => {
 
   return(
     verify(body)
+      .then(result => findingUserByEmailAddress(result))
+      .then(result => findingUserByEmailAddressAndCheckResult(result))
+      .then(result => decryptPassword(body.password, result[0].password))
+      .then(() => editEmail(body))
+      .then(result => successResponseWithData(result, "Success", "PUT", 200))
+      .catch(error => error)
   )
 
 }

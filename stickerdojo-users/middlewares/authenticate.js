@@ -18,6 +18,7 @@ function authenticateUser(req, res, next) {
   // Get token from request header
   const token = req.headers.authorization
   
+  // Check is token exist
   const checkTokenIsExist = (token) => {
     return new Promise((resolve, reject) => {
       token
@@ -35,8 +36,7 @@ function authenticateUser(req, res, next) {
         token,
         cert,
         (err, decoded) => {
-
-          if(decoded){
+          if(!err && decoded){
             if(decoded.scope === "access-token-user"){
               resolve(token)
             }else{
@@ -45,7 +45,6 @@ function authenticateUser(req, res, next) {
           }else{
             reject(errorResponse(res, "Your token does not have permission to access",403))
           }
-
         }
       )
     })

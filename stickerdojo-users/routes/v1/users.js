@@ -42,21 +42,21 @@ router.get('/users', authenticateUser, (req, res, next) => {
 })
 
 // Get or Fetch singgle user
-router.get('/user/:uuid', (req, res, next) => {
+router.get('/user/:uuid', authenticateUser, (req, res, next) => {
   Promise.try(() => getUserByUUID(req.params.uuid))
     .then(response => res.status(response.status).json(response))
     .catch(err => console.log("Error on GET_USER", err))
 })
 
 // Delete or Remove user
-router.delete('/user/close-account/:uuid', (req, res, next) => {
+router.delete('/user/close-account/:uuid', authenticateUser, (req, res, next) => {
   Promise.try(() => deleteUser(req.params.uuid))
     .then(response => res.status(response.status).json(response))
     .catch(err => console.log("Error on DELETE_USER", err))
 })
 
 // Update email address
-router.post('/user/update-email', (req, res, next) => {
+router.put('/user/update-email', authenticateUser, (req, res, next) => {
   Promise.try(() => updateEmail(req.body))
     .then(response => res.status(response.status).json(response))
     .catch(err => console.log("Error on UPDATE_EMAIL_USER", err))
