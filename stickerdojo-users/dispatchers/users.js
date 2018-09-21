@@ -11,9 +11,9 @@ const {
 } = require('../response')
 
 // Global Function
-const encryptPassword = (data) => {
+const encryptPassword = (password) => {
   return bcrypt
-    .hash(data.password, 10)
+    .hash(password, 10)
     .then(hash => hash)
     .catch(() => errorResponse("Internal server error", 500))
 }
@@ -21,8 +21,15 @@ const encryptPassword = (data) => {
 const decryptPassword = (password, hashedPassword) => {
   return bcrypt
     .compare(password, hashedPassword)
-    .then(result => result)
-    .catch(() => errorResponse("Internal server error", 500))
+    .then(result => {
+      return new Promise((resolve, reject) => {
+        result
+        ?
+          resolve(result)
+        :
+          reject(errorResponse("Incorrect Password", 409))
+      })
+    })
 }
 
 exports.registerUser = (body) => {
@@ -85,7 +92,7 @@ exports.registerUser = (body) => {
     verify(body)
       .then(result => checkEmailAvailability(result))
       .then(result => checkEmailAvailabilityAsync(result))
-      .then(() => encryptPassword(body))
+      .then(() => encryptPassword(body.password))
       .then(hashedPassword => registerUserAsync(body, hashedPassword))
       .then(id => successResponseWithData(id, "New user has been registered", "POST", 201))
       .catch(error => error)
@@ -238,7 +245,6 @@ exports.updateEmail = (body) => {
 
   // Get user which want to edit
   const editEmail = (body) => {
-    console.log(body)
     const currentTime = new Date().toISOString()
     return knex('users')
       .where('users.email_address', body.email_address)
@@ -247,20 +253,6 @@ exports.updateEmail = (body) => {
         modify_at: currentTime
       })
       .then(result => result)
-  }
-
-  const decryptPassword = (password, hashedPassword) => {
-    return bcrypt
-      .compare(password, hashedPassword)
-      .then(result => {
-        return new Promise((resolve, reject) => {
-          result
-          ?
-            resolve(result)
-          :
-            reject(errorResponse("Incorrect Password", 409))
-        })
-      })
   }
 
   // Verify
@@ -274,22 +266,136 @@ exports.updateEmail = (body) => {
     })
   }
 
+  // Processing
   return(
     verify(body)
       .then(result => findingUserByEmailAddress(result))
       .then(result => findingUserByEmailAddressAndCheckResult(result))
       .then(result => decryptPassword(body.password, result[0].password))
       .then(() => editEmail(body))
-      .then(result => successResponseWithData(result, "Success", "PUT", 200))
+      .then(result => successResponseWithData(result, "Success update email address", "PUT", 200))
       .catch(error => error)
   )
 
 }
 
-exports.updatePassowrd = (uuid, password) => {
+exports.updatePassowrd = (uuid, body) => {
+
+  // Search user by UUID
+  const findingUserByUUID = (uuid) => {
+    return knex('users')
+      .where('users.id', uuid)
+  }
+
+  // Check is user is exist
+  const findingUserByUUIDAndCheckResult = (data, uuid) => {
+    return new Promise((resolve, reject) => {
+      data.length
+      ?
+        resolve(data)
+      :
+        reject(errorResponse(`Delete Operation cannot be continue because there is no user with uuid ${uuid}`, 404))
+    })
+  }
+
+  // Edit password
+  const editPassword = (uuid, encryptedPassword) => {
+    const currentTime = new Date().toISOString()
+    return knex('users')
+      .where('users.id', uuid)
+      .update({
+        password: encryptedPassword,
+        modify_at: currentTime
+      })
+      .then(result => result)
+  }
+  
+  // Verify
+  const verify = (body) => {
+    return new Promise((resolve, reject) => {
+      body.password &&
+      body.new_password &&
+      body.confirm_new_password === body.new_password
+      ?
+        resolve(body)
+      :
+        reject(errorResponse("Some field is null", 409))
+    })
+  }
+
+  // Processing
+  return(
+    verify(body)
+      .then(() => findingUserByUUID(uuid))
+      .then(result => findingUserByUUIDAndCheckResult(result))
+      .then(result => decryptPassword(body.password, result[0].password))
+      .then(() => encryptPassword(body.new_password))
+      .then(hashedPassword => editPassword(uuid, hashedPassword))
+      .then(result => successResponseWithData(result, "Success update password", "PUT", 201))
+      .catch(error => error)
+  )
 
 }
 
-exports.updateUser = (uuid) => {
+exports.updateUser = (uuid, body) => {
+
+  // Search user by UUID
+  const findingUserByUUID = (uuid) => {
+    return knex('users')
+      .where('users.id', uuid)
+  }
+
+  // Check is user is exist
+  const findingUserByUUIDAndCheckResult = (data, uuid) => {
+    return new Promise((resolve, reject) => {
+      data.length
+      ?
+        resolve(data)
+      :
+        reject(errorResponse(`Delete Operation cannot be continue because there is no user with uuid ${uuid}`, 404))
+    })
+  }
+
+  // Edit password
+  const editProfile = (uuid, body, data) => {
+    const currentTime = new Date().toISOString()
+    console.log(data)
+    return knex('users')
+      .where('users.id', uuid)
+      .update({
+        email_address: body.email_address ? body.email_address : data[0].email_address,
+        first_name: body.first_name ? body.first_name : data[0].first_name,
+        last_name: body.last_name ? body.last_name : data[0].last_name,
+        username: body.username ? body.username : data[0].username,
+        about: body.about ? body.about : data[0].about,
+        job: body.job ? body.job : data[0].job,
+        ages: body.ages ? body.ages : data[0].ages,
+        modify_at: currentTime
+      })
+      .then(result => result)
+  }
+  
+  // Verify
+  const verify = (body) => {
+    return new Promise((resolve, reject) => {
+      item.email_address && item.first_name
+      item.last_name && item.username
+      item.about && item.job && item.ages
+      ?
+        resolve(body)
+      :
+        reject(errorResponse("Some field is null", 409))
+    })
+  }
+
+  // Processing
+  return(
+    verify(body)
+      .then(() => findingUserByUUID(uuid))
+      .then(result => findingUserByUUIDAndCheckResult(result, uuid))
+      .then(result => editProfile(uuid, body, result))
+      .then(result => successResponseWithData(result, "Success update user profile", "PUT", 201))
+      .catch(error => error)
+  )
 
 }

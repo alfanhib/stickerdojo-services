@@ -8,7 +8,9 @@ const {
   getUserByUUID,
   deleteUser,
   registerUser,
-  updateEmail
+  updateEmail,
+  updatePassowrd,
+  updateUser
 } = require('../../dispatchers/users')
 
 // Middlewares
@@ -60,6 +62,20 @@ router.put('/user/update-email', authenticateUser, (req, res, next) => {
   Promise.try(() => updateEmail(req.body))
     .then(response => res.status(response.status).json(response))
     .catch(err => console.log("Error on UPDATE_EMAIL_USER", err))
+})
+
+// Update password
+router.put('/user/update-password/:uuid', authenticateUser, (req, res, next) => {
+  Promise.try(() => updatePassowrd(req.params.uuid, req.body))
+    .then(response => res.status(response.status).json(response))
+    .catch(err => console.log("Error on UPDATE_PASSWORD_USER", err))
+})
+
+// Update profile
+router.put('/user/update-profile/:uuid', authenticateUser, (req, res, next) => {
+  Promise.try(() => updateUser(req.params.uuid, req.body))
+    .then(response => res.status(response.status).json(response))
+    .catch(err => console.log("Error on UPDATE_USER_PROFILE_USER", err))
 })
 
 module.exports = router
