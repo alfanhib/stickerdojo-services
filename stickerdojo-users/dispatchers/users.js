@@ -2,6 +2,7 @@ const Promise         = require('bluebird')
 const knex            = require('./knex')
 const bcrypt          = require('bcrypt')
 const uuid            = require('uuid/v1')
+const NestHydrationJS = require("nesthydrationjs")()
 
 // Response
 const { 
@@ -9,6 +10,11 @@ const {
   successResponseWithData,
   successResponseWithoutData
 } = require('../response')
+
+// Definitions
+const {
+  usersDefinition
+} = require('../definitions/users')
 
 // Global Function
 const encryptPassword = (password) => {
@@ -124,6 +130,7 @@ exports.getUsers = () => {
   return(
     getUsers()
       .then(result => getUsersAndCheckResult(result))
+      .then(result => NestHydrationJS.nest(result, usersDefinition))
       .then(result => successResponseWithData(result, "Successfully get all users", "GET", 200))
       .catch(error => error)
   )
