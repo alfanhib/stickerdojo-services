@@ -359,11 +359,9 @@ exports.updateUser = (uuid, body) => {
   // Edit password
   const editProfile = (uuid, body, data) => {
     const currentTime = new Date().toISOString()
-    console.log(data)
     return knex('users')
       .where('users.id', uuid)
       .update({
-        email_address: body.email_address ? body.email_address : data[0].email_address,
         first_name: body.first_name ? body.first_name : data[0].first_name,
         last_name: body.last_name ? body.last_name : data[0].last_name,
         username: body.username ? body.username : data[0].username,
@@ -376,13 +374,13 @@ exports.updateUser = (uuid, body) => {
   }
   
   // Verify
-  const verify = (body) => {
+  const verify = (item) => {
     return new Promise((resolve, reject) => {
       item.email_address && item.first_name
       item.last_name && item.username
       item.about && item.job && item.ages
       ?
-        resolve(body)
+        resolve(item)
       :
         reject(errorResponse("Some field is null", 409))
     })
@@ -394,7 +392,7 @@ exports.updateUser = (uuid, body) => {
       .then(() => findingUserByUUID(uuid))
       .then(result => findingUserByUUIDAndCheckResult(result, uuid))
       .then(result => editProfile(uuid, body, result))
-      .then(result => successResponseWithData(result, "Success update user profile", "PUT", 201))
+      .then(result => successResponseWithData(result, "Success update profile", "PUT", 201))
       .catch(error => error)
   )
 
