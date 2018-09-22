@@ -2,7 +2,7 @@ const express = require('express')
 const Promise = require('bluebird')
 const router = express.Router()
 
-// Dispatchers
+// Users Dispatchers
 const { 
   getUsers, 
   getUserByUUID,
@@ -12,6 +12,11 @@ const {
   updatePassowrd,
   updateUser
 } = require('../../dispatchers/users')
+
+// Like Dispatchers
+const {
+  postLikeToSticker
+} = require('../../dispatchers/like')
 
 // Middlewares
 const {
@@ -28,6 +33,13 @@ const {
  * PUT      localhost:3000/api/v1/user/update-email/:uuid     (change email user)
  * PUT      localhost:3000/api/v1/user/update-password/:uuid  (change password user)
  */
+
+// Post like to sticker
+router.post('/user/like/sticker', (req, res, next) => {
+  Promise.try(() => postLikeToSticker(req.body))
+    .then(response => res.status(response.status).json(response))
+    .catch(err => console.log("Error on POST_LIKE_STICKER", err))
+})
 
 // Register users
 router.post('/user/register', (req, res, next) => {

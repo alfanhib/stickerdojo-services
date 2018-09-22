@@ -1,4 +1,11 @@
 echo "Starting stickerdojo-users service"
-pm2 start stickerdojo-users/bin/www --name admin
+cd stickerdojo-users
+npm run dev
+
 echo "Starting stickerdojo-auth service"
-pm2 start stickerdojo-auth/bin/www --name auth
+cd stickerdojo-auth
+npm run dev
+
+echo "Starting stickerdojo-sticker service"
+cd stickerdojo-sticker
+npm run dev
