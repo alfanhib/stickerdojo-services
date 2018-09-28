@@ -19,3 +19,7 @@ npm run dev
 | PUT           | localhost:3000/api/v1/user/update-email/:uuid     | Update user Email       |
 | PUT           | localhost:3000/api/v1/user/update-password/:uuid  | Update user Password    |
 | PUT           | localhost:3000/api/v1/user/update-profile/:uuid   | Update user Profile     |
+
+## Examples
+- Request
+- Response
