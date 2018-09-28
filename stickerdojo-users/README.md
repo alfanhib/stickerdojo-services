@@ -1,12 +1,14 @@
-# Stickerdojo users API
+# User services
+This API reference is organized by resource type. Each resource type has one or more data representations and one or more methods.
 
-## Starting stickerdojo-users on PORT 3000
+## Starting service
+this service will run at port 300
 ```
 cd stickerdojo-users
 npm run dev
 ```
 
-## User services
+## Resources
 
 | Method        | Request                                           | Description             |
 | ------------- | --------------------------------------------------|-------------------------|
@@ -17,4 +19,3 @@ npm run dev
 | PUT           | localhost:3000/api/v1/user/update-email/:uuid     | Update user Email       |
 | PUT           | localhost:3000/api/v1/user/update-password/:uuid  | Update user Password    |
 | PUT           | localhost:3000/api/v1/user/update-profile/:uuid   | Update user Profile     |
-
