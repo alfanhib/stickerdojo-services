@@ -180,57 +180,6 @@ exports.getUserByUUID = (uuid) => {
 
 }
 
-exports.deleteUser = (uuid) => {
-
-  const uuidValidator = new RegExp(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
-
-  // Search user by UUID
-  const findingUserByUUID = (uuid) => {
-    return knex('users')
-      .where('users.id', uuid)
-  }
-
-  // Delete User by UUID
-  const deleteUser = (uuid) => {
-    return knex('users')
-      .where('users.id', uuid)
-      .del()
-  }
-
-  // Check is user is exist
-  const findingUserByUUIDAndCheckResult = (data, uuid) => {
-    return new Promise((resolve, reject) => {
-      data.length
-      ?
-        resolve(data)
-      :
-        reject(errorResponse(`Delete Operation cannot be continue because there is no user with uuid ${uuid}`, 404))
-    })
-  }
-
-  // Verify entered uuid
-  const verify = (uuid) => {
-    return new Promise((resolve, reject) => {
-      uuid.length == 36 && uuidValidator.test(uuid)
-      ?
-        resolve(uuid)
-      :
-        reject(errorResponse("Invalid uuid sorry", 409))
-    })
-  }
-
-  // Processing
-  return(
-    verify(uuid)
-      .then(result => findingUserByUUID(result))
-      .then(result => findingUserByUUIDAndCheckResult(result, uuid))
-      .then(result => result ? deleteUser(uuid) : errorResponse(`Delete Operation cannot be continue because there is no user with uuid ${uuid}`, 404))
-      .then(() => successResponseWithoutData("Successfully Delete user", "DELETE", 201))
-      .catch(error => error)
-  )
-
-}
-
 exports.updateEmail = (body) => {
 
   // Get user which want to edit

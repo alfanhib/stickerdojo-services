@@ -29,7 +29,6 @@ const {
  * POST     localhost:3000/api/v1/user/register               (registration)
  * GET      localhost:3000/api/v1/users                       (fetch users)
  * GET      localhost:3000/api/v1/user/:uuid                  (fetch user)
- * DELETE   localhost:3000/api/v1/user/close-account/:uuid    (delete or destroy user)
  * PUT      localhost:3000/api/v1/user/update-email/:uuid     (change email user)
  * PUT      localhost:3000/api/v1/user/update-password/:uuid  (change password user)
  */
@@ -60,13 +59,6 @@ router.get('/user/:uuid', authenticateUser, (req, res, next) => {
   Promise.try(() => getUserByUUID(req.params.uuid))
     .then(response => res.status(response.status).json(response))
     .catch(err => console.log("Error on GET_USER", err))
-})
-
-// Delete or Remove user
-router.delete('/user/close-account/:uuid', authenticateUser, (req, res, next) => {
-  Promise.try(() => deleteUser(req.params.uuid))
-    .then(response => res.status(response.status).json(response))
-    .catch(err => console.log("Error on DELETE_USER", err))
 })
 
 // Update email address
