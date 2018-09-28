@@ -8,8 +8,7 @@ const cert            = fs.readFileSync('/home/muhammadisa/Desktop/Documents/Exp
 // Response
 const { 
   errorResponse,
-  successResponseWithData,
-  successResponseWithoutData
+  successResponseWithData
 } = require('../response')
 
 // Objects
