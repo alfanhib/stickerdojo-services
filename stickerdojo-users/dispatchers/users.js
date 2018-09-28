@@ -100,7 +100,7 @@ exports.registerUser = (body) => {
       .then(result => checkEmailAvailabilityAsync(result))
       .then(() => encryptPassword(body.password))
       .then(hashedPassword => registerUserAsync(body, hashedPassword))
-      .then(id => successResponseWithData(id, "New user has been registered", "POST", 201))
+      .then(result => successResponseWithData(result.rowCount, "New user has been registered", "POST", 201))
       .catch(error => error)
   )
 

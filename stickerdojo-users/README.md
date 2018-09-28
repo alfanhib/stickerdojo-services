@@ -21,7 +21,7 @@ npm run dev
 | PUT           | localhost:3000/api/v1/user/update-profile/:uuid   | Update user Profile     |
 
 ## Examples
-- Request to _POST localhost:3000/api/v1/register_
+- Request to (**POST**) _localhost:3000/api/v1/register_
 
 ```
 {
@@ -36,24 +36,15 @@ npm run dev
 }
 ```
 
-- Response from _POST localhost:3000/api/v1/register_
+- Response from (**POST**) _localhost:3000/api/v1/register_
 
 ```
 {
     "condition": "Success",
     "message": "New user has been registered",
     "method": "POST",
-    "time": "2018-09-28T18:13:07.524Z",
+    "time": "2018-09-28T18:50:13.143Z",
     "status": 201,
-    "data": {
-        "command": "INSERT",
-        "rowCount": 1,
-        "oid": 0,
-        "rows": [],
-        "fields": [],
-        "_parsers": [],
-        "RowCtor": null,
-        "rowAsArray": false
-    }
+    "data": 1
 }
 ```
